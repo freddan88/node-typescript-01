@@ -9,3 +9,37 @@ export type TCharacters = {
   next: string | null;
   count: number;
 };
+
+export type ICharactersData = {
+  id: number;
+  name: string;
+  types: [
+    {
+      type: {
+        name: string;
+      };
+    }
+  ];
+  sprites: {
+    front_default: string;
+    other: {
+      dream_world: {
+        front_default: string;
+      };
+    };
+  };
+};
+
+export type TReturnCharacter = {
+  id: number;
+  name: string;
+  type: string;
+  sprite: string;
+};
+
+export type TReturnData = {
+  page: number;
+  cached: boolean;
+  totalPages: number;
+  characters: TReturnCharacter[];
+};

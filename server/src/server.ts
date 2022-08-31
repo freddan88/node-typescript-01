@@ -1,82 +1,56 @@
-import express, { Request, Response } from "express";
+import express, { Request as Req, Response as Res } from "express";
+import axios from "axios";
 import dotenv from "dotenv";
-import axios, { AxiosResponse } from "axios";
-import { TCharacter, TCharacters } from "./types";
+import { ICharactersData, TCharacters, TReturnData } from "./types";
 
 dotenv.config();
 
 const server = express();
 
-const port = process.env.PORT || 3001;
+const apiPokemonLimit = 9;
 
-const pokedexCache = {
-  count: 0,
-  next: "",
-  previous: "",
-  characters: [],
-};
+const apiBaseUrl = "https://pokeapi.co/api/v2/pokemon";
 
-const apiBaseUrlSetting = "https://pokeapi.co/api/v2/pokemon";
-const apiPerPageSetting = 9;
+const port = process.env.PORT || 3002;
 
-const getCharacters = async (dataOffset: number) => {
-  try {
-    const apiUrl = `${apiBaseUrlSetting}?offset=${dataOffset}&limit=${apiPerPageSetting}`;
-    const apiRes: AxiosResponse<TCharacters> = await axios.get(apiUrl);
-    if (apiRes.status !== 200) throw new Error(`Status: ${apiRes.status}`);
-    return apiRes.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
+const savedCharacters: TReturnData[] = [];
 
-const getCharactersInfo = async (
-  characters: TCharacter[],
-  page: number,
-  cb: any
-) => {
-  const characterPromises = characters.map((character) =>
-    axios.get(character.url)
-  );
-  const charactersInfo = await Promise.all(characterPromises);
-  const charactersModified = charactersInfo.map((characterInfo) => {
-    const { other, front_default } = characterInfo.data.sprites;
+const getCharacterInfo = async (data: TCharacters, pageNumber: number) => {
+  const { count, results } = data;
+  const totalPages = Math.ceil(count / apiPokemonLimit);
+  const promises = results.map((obj) => axios.get<ICharactersData>(obj.url));
+  const resolved = await Promise.all(promises);
+  const characters = resolved.map((apiRes) => {
+    const { other, front_default } = apiRes.data.sprites;
     const image = other.dream_world.front_default
       ? other.dream_world.front_default
       : front_default;
     return {
-      page,
-      id: characterInfo.data.id,
-      name: characterInfo.data.name,
-      type: characterInfo.data.types[0].type.name,
+      id: apiRes.data.id,
+      name: apiRes.data.name,
+      type: apiRes.data.types[0].type.name,
       sprite: image,
     };
   });
-  cb(charactersModified);
+  return { page: pageNumber, totalPages, characters };
 };
 
-const handleData = (data: any) => {
-  console.log(data);
-};
-
-server.get(
-  "/api/pokedex/:page",
-  (req: Request<{ page: number }>, res: Response) => {
-    const page = req.params.page;
-
-    if (page > 0) {
-      const dataOffset = (page - 1) * apiPerPageSetting;
-      const apiData = getCharacters(dataOffset);
-      apiData.then((data) => {
-        if (data) {
-          getCharactersInfo(data.results, page, handleData);
-          res.status(200).json(pokedexCache);
-        }
-      });
-    } else {
-      res.status(500).json("Page needs to be a number from 1");
-    }
-  }
-);
+server.get("/api/pokedex/:page", (req: Req<{ page: string }>, res: Res) => {
+  const pageNumber = req.params.page ? +req.params.page : 0;
+  if (pageNumber <= 0)
+    return res.status(500).json("An error occurred status: 500");
+  const cachedPage = savedCharacters.find((obj) => obj.page === pageNumber);
+  if (cachedPage) return res.status(200).json(cachedPage);
+  const dataOffset = (pageNumber - 1) * apiPokemonLimit;
+  const apiUrl = `${apiBaseUrl}?offset=${dataOffset}&limit=${apiPokemonLimit}`;
+  axios
+    .get<TCharacters>(apiUrl)
+    .then((apiRes) => getCharacterInfo(apiRes.data, pageNumber))
+    .then((data) => {
+      savedCharacters.push({ cached: true, ...data });
+      res.status(200).json({ cached: false, ...data });
+    })
+    .catch((err) => console.log(err));
+});
 
 server.listen(port, () => console.log(`Server started on port: ${port}`));
