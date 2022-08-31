@@ -7,13 +7,19 @@ dotenv.config();
 
 const server = express();
 
-const apiPokemonLimit = 9;
-
-const apiBaseUrl = "https://pokeapi.co/api/v2/pokemon";
-
 const port = process.env.PORT || 3002;
 
 const savedCharacters: TReturnData[] = [];
+
+const apiBaseUrl = "https://pokeapi.co/api/v2/pokemon";
+
+const apiPokemonLimit = 9;
+
+const capitalizeFirst = (name: string) => {
+  const firstCharacter = name.slice(0, 1);
+  const restCharacters = name.slice(1, name.length);
+  return firstCharacter.toUpperCase() + restCharacters;
+};
 
 const getCharacterInfo = async (data: TCharacters, pageNumber: number) => {
   const { count, results } = data;
@@ -25,9 +31,11 @@ const getCharacterInfo = async (data: TCharacters, pageNumber: number) => {
     const image = other.dream_world.front_default
       ? other.dream_world.front_default
       : front_default;
+    const { id, name } = apiRes.data;
+    const modifiedName = capitalizeFirst(name);
     return {
-      id: apiRes.data.id,
-      name: apiRes.data.name,
+      id,
+      name: modifiedName,
       type: apiRes.data.types[0].type.name,
       sprite: image,
     };
