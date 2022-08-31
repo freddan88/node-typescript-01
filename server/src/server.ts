@@ -1,18 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import axios, { AxiosResponse } from "axios";
-
-type TCharacter = {
-  name: string;
-  url: string;
-};
-
-type TCharacters = {
-  results: TCharacter[];
-  previous: string | null;
-  next: string | null;
-  count: number;
-};
+import { TCharacter, TCharacters } from "./types";
 
 dotenv.config();
 
