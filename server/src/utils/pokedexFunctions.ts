@@ -1,6 +1,23 @@
 import axios from "axios";
 import { API_POKEMON_LIMIT } from "./pokedexConstants";
-import { ICharactersData, TCharacters } from "./pokedexTypes";
+import { ICharactersData, TCharacters, TReturnData } from "./pokedexTypes";
+
+class PokedexCache {
+  db: TReturnData[] = [];
+
+  set(obj: TReturnData) {
+    this.db.push(obj);
+  }
+
+  get(pageNumber: number) {
+    return this.db.find((obj) => obj.page === pageNumber);
+  }
+
+  clear() {
+    console.log("Empty cache");
+    this.db.length = 0;
+  }
+}
 
 const getImage = (imgUrlA: string, imgUrlB: string) => {
   if (imgUrlA) return imgUrlA;
@@ -35,3 +52,5 @@ export const getCharacterInfo = async (
   });
   return { page: pageNumber, totalPages, characters };
 };
+
+export const pokedexCache = new PokedexCache();
