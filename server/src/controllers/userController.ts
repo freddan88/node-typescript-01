@@ -15,7 +15,9 @@ export const store = (req: Req, res: Res) => {
 };
 
 export const show = (req: Req<TUserParams>, res: Res) => {
-  res.status(200).json(users);
+  const userData = users.find((user) => user.id === +req.params.id);
+  if (!userData) return res.status(204).json("No content");
+  res.status(200).json(userData);
 };
 
 export const edit = (req: Req<TUserParams>, res: Res) => {
