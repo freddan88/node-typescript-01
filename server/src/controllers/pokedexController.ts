@@ -1,15 +1,9 @@
 import { Request as Req, Response as Res } from "express";
 import axios from "axios";
-import { TCharacters, TReturnData } from "../utils/pokedexTypes";
+import { TCharacters } from "../utils/pokedexTypes";
 import { API_BASE_URL, API_POKEMON_LIMIT } from "../utils/pokedexConstants";
 import { getCharacterInfo } from "../utils/pokedexFunctions";
-
-const savedCharacters: TReturnData[] = [];
-
-setInterval(() => {
-  console.log("Empty cache");
-  savedCharacters.length = 0;
-}, 300000); // Every 5 minute
+import { savedCharacters } from "../server";
 
 export const index = (req: Req, res: Res) => {
   const pageNumber = req.params.page ? +req.params.page : 0;
