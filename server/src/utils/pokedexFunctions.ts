@@ -14,8 +14,10 @@ class PokedexCache {
   }
 
   clear() {
-    console.log("Empty cache");
-    this.db.length = 0;
+    if (this.db.length > 0) {
+      console.log("Empty cache");
+      this.db.length = 0;
+    }
   }
 }
 
