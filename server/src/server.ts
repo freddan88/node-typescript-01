@@ -15,6 +15,11 @@ const apiBaseUrl = "https://pokeapi.co/api/v2/pokemon";
 
 const apiPokemonLimit = 9;
 
+setInterval(() => {
+  console.log("Empty cache");
+  savedCharacters.length = 0;
+}, 300000); // Every 5 minute
+
 const capitalizeFirst = (name: string) => {
   const firstCharacter = name.slice(0, 1);
   const restCharacters = name.slice(1, name.length);
