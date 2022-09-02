@@ -11,7 +11,7 @@ type TStatuses = {
 
 export const apiStatuses: TStatuses = {
   204: { code: 204, description: "No Content" },
-  400: { code: 204, description: "Bad Request" },
+  400: { code: 400, description: "Bad Request" },
 };
 
 export const sendError = (res: Res, code: number) => {

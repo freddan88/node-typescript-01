@@ -3,20 +3,24 @@ import { API_POKEMON_LIMIT } from "./pokedexConstants";
 import { ICharactersData, TCharacters, TReturnData } from "./pokedexTypes";
 
 class PokedexCache {
-  db: TReturnData[] = [];
+  collection: TReturnData[] = [];
 
   set(obj: TReturnData) {
-    this.db.push(obj);
+    this.collection.push(obj);
   }
 
   get(pageNumber: number) {
-    return this.db.find((obj) => obj.page === pageNumber);
+    return this.collection.find((obj) => obj.page === pageNumber);
+  }
+
+  show() {
+    console.log(this.collection);
   }
 
   clear() {
-    if (this.db.length > 0) {
-      console.log("Empty cache");
-      this.db.length = 0;
+    if (this.collection.length > 0) {
+      console.log("Removing saved pokemon-characters");
+      this.collection.length = 0;
     }
   }
 }
@@ -40,8 +44,8 @@ export const getCharacterInfo = async (
   const totalPages = Math.ceil(count / API_POKEMON_LIMIT);
   const promises = results.map((obj) => axios.get<ICharactersData>(obj.url));
   const resolved = await Promise.all(promises);
-  const characters = resolved.map((apiRes) => {
-    const { id, name, sprites, types } = apiRes.data;
+  const characters = resolved.map((axiosRes) => {
+    const { id, name, sprites, types } = axiosRes.data;
     const { other, front_default } = sprites;
     const image = getImage(other.dream_world.front_default, front_default);
     const modifiedName = capitalizeFirst(name);

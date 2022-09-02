@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as userController from "../controllers/userController";
 
-export type TUserParams = {
+export type TParams = {
   id: string;
 };
 
