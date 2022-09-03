@@ -4,6 +4,9 @@ import { TParams } from "../routes/userRoutes";
 import { sendError } from "../utils/apiStatuses";
 
 export const index = (req: Req, res: Res) => {
+  // res.statusCode = 404;
+  // res.statusMessage = "Page Not Found";
+  // throw new Error("Page Not Found");
   res.status(200).json(users);
 };
 
