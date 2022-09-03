@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
-import errorMiddleware from "./middlewares/errorMiddleware";
-import pokedexRoutes from "./routes/pokedexRoutes";
-import userRoutes from "./routes/userRoutes";
+import { errorMiddleware } from "./middlewares";
+import { pokedexRoutes, userRoutes } from "./routes";
 
 dotenv.config();
 
