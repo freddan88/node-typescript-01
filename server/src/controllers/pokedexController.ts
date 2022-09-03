@@ -1,15 +1,15 @@
-import { Request as Req, Response as Res } from "express";
+import { Request as Req, Response as Res, NextFunction as Next } from "express";
 import axios from "axios";
 import { TCharacters } from "../utils/pokedexTypes";
 import { API_BASE_URL, API_POKEMON_LIMIT } from "../utils/pokedexConstants";
 import { getCharacterInfo } from "../utils/pokedexFunctions";
 import { pokedexCache } from "../utils/pokedexFunctions";
 import { TParams } from "../routes/pokedexRoutes";
+import { CustomError } from "../utils/customError";
 
-export const index = (req: Req<TParams>, res: Res) => {
+export const index = (req: Req<TParams>, res: Res, next: Next) => {
   const pageNumber = req.params.page ? +req.params.page : 0;
-  if (pageNumber <= 0)
-    return res.status(500).json("An error occurred status: 500");
+  if (pageNumber <= 0) throw new CustomError({ status: 400 });
   const cachedPage = pokedexCache.get(pageNumber);
   if (cachedPage) return res.status(200).json(cachedPage);
   const dataOffset = (pageNumber - 1) * API_POKEMON_LIMIT;
@@ -21,5 +21,5 @@ export const index = (req: Req<TParams>, res: Res) => {
       pokedexCache.set({ cached: true, ...data });
       res.status(200).json({ cached: false, ...data });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => next({ status: 500 }));
 };
