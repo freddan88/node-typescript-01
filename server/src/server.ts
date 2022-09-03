@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
-import errorHandler from "./middlewares/errorHandler";
+import errorMiddleware from "./middlewares/errorMiddleware";
 import pokedexRoutes from "./routes/pokedexRoutes";
 import userRoutes from "./routes/userRoutes";
 
@@ -17,6 +17,6 @@ const port = process.env.PORT || 3005;
   server.use(`${prefix}/users`, userRoutes);
 }
 
-server.use(errorHandler);
+server.use(errorMiddleware);
 
 server.listen(port, () => console.log(`Server started on port: ${port}`));
