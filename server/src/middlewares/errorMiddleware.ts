@@ -24,8 +24,10 @@ const errorMiddleware = (
   res.status(err.status || 500);
   res.json({
     error: true,
-    status: err.status,
+    httpStatus: err.status,
     message: err.message || httpStatuses[err.status].description,
+    httpMessage: err.message || httpStatuses[err.status].description,
+    extraMessage: "",
   });
 };
 
