@@ -38,6 +38,8 @@ export type TReturnCharacter = {
 };
 
 export type TReturnData = {
+  next: string;
+  prev: string;
   page: number;
   cached: boolean;
   totalPages: number;

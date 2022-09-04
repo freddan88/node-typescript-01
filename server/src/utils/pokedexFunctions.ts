@@ -1,6 +1,8 @@
-import axios from "axios";
-import { API_POKEMON_LIMIT } from "./pokedexConstants";
 import { ICharactersData, TCharacters, TReturnData } from "./pokedexTypes";
+import { API_POKEMON_LIMIT } from "./pokedexConstants";
+import { serverError } from "../data/httpMessages";
+import { CustomError } from "./customError";
+import axios from "axios";
 
 class PokedexCache {
   collection: TReturnData[] = [];
@@ -44,7 +46,9 @@ export const getCharacterInfo = async (
   const totalPages = Math.ceil(count / API_POKEMON_LIMIT);
   const promises = results.map((obj) => axios.get<ICharactersData>(obj.url));
   const resolved = await Promise.all(promises);
-  if (resolved.some((obj) => obj.status !== 200)) throw new Error("Character");
+  if (resolved.some((obj) => obj.status !== 200)) {
+    throw new CustomError(serverError);
+  }
   const characters = resolved.map((axiosRes) => {
     const { id, name, sprites, types } = axiosRes.data;
     const { other, front_default } = sprites;
