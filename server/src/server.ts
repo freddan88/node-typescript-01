@@ -18,4 +18,11 @@ const port = process.env.PORT || 3005;
 
 server.use(errorMiddleware);
 
+console.log("");
+console.log("Endpoints");
+console.log(`- http://localhost:${port}/api/v1/pokedex/1`);
+console.log(`- http://localhost:${port}/api/v1/users/1`);
+console.log(`- http://localhost:${port}/api/v1/users`);
+console.log("");
+
 server.listen(port, () => console.log(`Server started on port: ${port}`));
