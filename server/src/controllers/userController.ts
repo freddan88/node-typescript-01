@@ -1,12 +1,10 @@
 import { Request as Req, Response as Res } from "express";
-import { users } from "../data/users";
+import { outRange } from "../data/httpMessages";
+import { CustomError } from "../utils/customError";
 import { TParams } from "../routes/userRoutes";
-import { sendError } from "../utils/apiStatuses";
+import { users } from "../data/users";
 
 export const index = (req: Req, res: Res) => {
-  // res.statusCode = 404;
-  // res.statusMessage = "Page Not Found";
-  // throw new Error("Page Not Found");
   res.status(200).json(users);
 };
 
@@ -20,7 +18,7 @@ export const store = (req: Req, res: Res) => {
 
 export const show = (req: Req<TParams>, res: Res) => {
   const userData = users.find((user) => user.id === +req.params.id);
-  if (!userData) return sendError(res, 400);
+  if (!userData) throw new CustomError(outRange, [req.params.id]);
   res.status(200).json(userData);
 };
 

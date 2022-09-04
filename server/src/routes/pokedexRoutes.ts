@@ -10,6 +10,8 @@ setInterval(() => pokedexCache.clear(), 300000); // Every 5 minute
 
 const pokedexRoutes = Router();
 
-pokedexRoutes.get("/:page", pokedexController.index);
+pokedexRoutes.get("/", pokedexController.index);
+
+pokedexRoutes.get("/:page", pokedexController.show);
 
 export default pokedexRoutes;

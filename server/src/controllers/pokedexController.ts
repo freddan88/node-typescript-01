@@ -6,10 +6,15 @@ import { getCharacterInfo } from "../utils/pokedexFunctions";
 import { pokedexCache } from "../utils/pokedexFunctions";
 import { TParams } from "../routes/pokedexRoutes";
 import { CustomError } from "../utils/customError";
+import { missingParam, serverError } from "../data/httpMessages";
 
 export const index = (req: Req<TParams>, res: Res, next: Next) => {
+  throw new CustomError(missingParam, ["page"]);
+};
+
+export const show = (req: Req<TParams>, res: Res, next: Next) => {
   const pageNumber = req.params.page ? +req.params.page : 0;
-  if (pageNumber <= 0) throw new CustomError({ status: 400 });
+  if (pageNumber <= 0) throw new CustomError(missingParam, ["page"]);
   const cachedPage = pokedexCache.get(pageNumber);
   if (cachedPage) return res.status(200).json(cachedPage);
   const dataOffset = (pageNumber - 1) * API_POKEMON_LIMIT;
@@ -21,5 +26,5 @@ export const index = (req: Req<TParams>, res: Res, next: Next) => {
       pokedexCache.set({ cached: true, ...data });
       res.status(200).json({ cached: false, ...data });
     })
-    .catch((err) => next({ status: 500 }));
+    .catch((err) => next({ ...serverError, error: err }));
 };
