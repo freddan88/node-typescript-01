@@ -1,3 +1,4 @@
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { errorMiddleware } from "./middlewares";
@@ -8,6 +9,8 @@ dotenv.config();
 const server = express();
 
 const port = process.env.PORT || 3005;
+
+server.use(cors());
 
 // Version: 1 Routes
 {

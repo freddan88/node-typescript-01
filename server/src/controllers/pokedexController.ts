@@ -25,10 +25,11 @@ export const show = (req: Req<TParams>, res: Res, next: Next) => {
     .get<TCharacters>(apiUrl)
     .then((axiosRes) => getCharacterInfo(axiosRes.data, pageNumber))
     .then((axiosData) => {
-      let next = pageNumber >= axiosData.totalPages ? "" : nextUrl;
+      const pages = axiosData.page + "/" + axiosData.totalPages;
+      const next = pageNumber >= axiosData.totalPages ? "" : nextUrl;
       const prev = pageNumber === 1 ? "" : prevUrl;
-      pokedexCache.set({ cached: true, next, prev, ...axiosData });
-      res.status(200).json({ cached: false, next, prev, ...axiosData });
+      pokedexCache.set({ cached: true, next, prev, pages, ...axiosData });
+      res.status(200).json({ cached: false, next, prev, pages, ...axiosData });
     })
     .catch((err) => next({ ...serverError, error: err }));
 };
