@@ -1,5 +1,6 @@
 import cors from "cors";
 import dotenv from "dotenv";
+import helmet from "helmet";
 import express from "express";
 import { errorMiddleware } from "./middlewares";
 import { pokedexRoutes, userRoutes } from "./routes";
@@ -11,6 +12,7 @@ const server = express();
 const port = process.env.PORT || 3005;
 
 server.use(cors());
+// server.use(helmet());
 
 // Version: 1 Routes
 {
